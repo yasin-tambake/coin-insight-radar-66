@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -76,7 +75,9 @@ const CoinDetail = () => {
     );
   }
 
-  const priceChangeClass = coinDetail?.price_change_percentage_24h >= 0 
+  // Safely check if price_change_percentage_24h exists and is >= 0
+  const priceChangeClass = coinDetail?.price_change_percentage_24h != null && 
+    coinDetail?.price_change_percentage_24h >= 0 
     ? 'price-up' 
     : 'price-down';
 
@@ -196,7 +197,7 @@ const CoinDetail = () => {
                 </Button>
                 
                 <div className={`flex items-center gap-1 text-xl font-bold ${priceChangeClass}`}>
-                  {coinDetail.price_change_percentage_24h >= 0 ? (
+                  {coinDetail.price_change_percentage_24h != null && coinDetail.price_change_percentage_24h >= 0 ? (
                     <TrendingUp className="h-5 w-5" />
                   ) : (
                     <TrendingDown className="h-5 w-5" />
@@ -222,6 +223,7 @@ const CoinDetail = () => {
                       <div>
                         <div className="text-xs text-gray-400">24h Change</div>
                         <div className={`text-sm font-medium ${
+                          coinDetail.price_change_percentage_24h != null && 
                           coinDetail.price_change_percentage_24h >= 0 ? 'price-up' : 'price-down'
                         }`}>
                           {formatPercentage(coinDetail.price_change_percentage_24h)}
@@ -230,31 +232,25 @@ const CoinDetail = () => {
                       <div>
                         <div className="text-xs text-gray-400">7d Change</div>
                         <div className={`text-sm font-medium ${
-                          coinDetail.price_change_percentage_7d_in_currency
+                          coinDetail.price_change_percentage_7d_in_currency != null
                             ? coinDetail.price_change_percentage_7d_in_currency >= 0
                               ? 'price-up'
                               : 'price-down'
                             : ''
                         }`}>
-                          {coinDetail.price_change_percentage_7d_in_currency
-                            ? formatPercentage(coinDetail.price_change_percentage_7d_in_currency)
-                            : 'N/A'
-                          }
+                          {formatPercentage(coinDetail.price_change_percentage_7d_in_currency)}
                         </div>
                       </div>
                       <div>
                         <div className="text-xs text-gray-400">30d Change</div>
                         <div className={`text-sm font-medium ${
-                          coinDetail.price_change_percentage_30d_in_currency
+                          coinDetail.price_change_percentage_30d_in_currency != null
                             ? coinDetail.price_change_percentage_30d_in_currency >= 0
                               ? 'price-up'
                               : 'price-down'
                             : ''
                         }`}>
-                          {coinDetail.price_change_percentage_30d_in_currency
-                            ? formatPercentage(coinDetail.price_change_percentage_30d_in_currency)
-                            : 'N/A'
-                          }
+                          {formatPercentage(coinDetail.price_change_percentage_30d_in_currency)}
                         </div>
                       </div>
                     </div>

@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 // API base URLs
@@ -403,7 +404,10 @@ export const formatCurrency = (
   return formatter.format(value);
 };
 
-export const formatPercentage = (value: number): string => {
+export const formatPercentage = (value: number | undefined | null): string => {
+  if (value === undefined || value === null) {
+    return 'N/A';
+  }
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 };
 

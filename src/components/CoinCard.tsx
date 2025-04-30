@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,11 +31,12 @@ const CoinCard: React.FC<CoinCardProps> = ({
     }
   }, [coin.current_price, previousPrice]);
 
-  const priceChangeClass = coin.price_change_percentage_24h >= 0 
+  const priceChangeClass = coin.price_change_percentage_24h != null && 
+    coin.price_change_percentage_24h >= 0 
     ? 'price-up' 
     : 'price-down';
 
-  const priceChange7dClass = coin.price_change_percentage_7d_in_currency
+  const priceChange7dClass = coin.price_change_percentage_7d_in_currency != null
     ? coin.price_change_percentage_7d_in_currency >= 0 ? 'price-up' : 'price-down'
     : 'price-neutral';
 
@@ -78,7 +78,7 @@ const CoinCard: React.FC<CoinCardProps> = ({
               {formatCurrency(coin.current_price, currency)}
             </div>
             <div className={`flex items-center ${priceChangeClass}`}>
-              {coin.price_change_percentage_24h >= 0 ? (
+              {coin.price_change_percentage_24h != null && coin.price_change_percentage_24h >= 0 ? (
                 <TrendingUp className="h-3.5 w-3.5 mr-1" />
               ) : (
                 <TrendingDown className="h-3.5 w-3.5 mr-1" />

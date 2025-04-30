@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -104,7 +105,7 @@ const CoinCard: React.FC<CoinCardProps> = ({
             </div>
           </div>
           
-          {coin.sparkline_in_7d && coin.sparkline_in_7d.price.length > 0 && (
+          {coin.sparkline_in_7d && coin.sparkline_in_7d.price && coin.sparkline_in_7d.price.length > 0 && (
             <div className="mt-3 h-16 relative">
               {/* Simple sparkline visualization */}
               <div className="absolute inset-0 flex items-end">

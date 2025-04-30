@@ -1,31 +1,39 @@
 
-// Helper functions for formatting data
+/**
+ * Format a number as currency
+ */
 export const formatCurrency = (
-  value: number,
+  value: number | undefined | null,
   currency = 'usd',
-  maximumFractionDigits = 2
+  decimals = 2
 ): string => {
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currency.toUpperCase(),
-    maximumFractionDigits,
-  });
+  if (value === undefined || value === null) return 'N/A';
   
-  return formatter.format(value);
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
+  } catch (error) {
+    console.error('Error formatting currency:', error);
+    return `${value.toFixed(decimals)}`;
+  }
 };
 
-export const formatPercentage = (value: number | undefined | null): string => {
-  if (value === undefined || value === null) {
+/**
+ * Format a number as percentage
+ */
+export const formatPercentage = (
+  value: number | undefined | null
+): string => {
+  if (value === undefined || value === null) return 'N/A';
+  
+  try {
+    return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+  } catch (error) {
+    console.error('Error formatting percentage:', error);
     return 'N/A';
   }
-  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
-};
-
-export const formatCompactNumber = (value: number): string => {
-  const formatter = new Intl.NumberFormat('en-US', {
-    notation: 'compact',
-    compactDisplay: 'short',
-  });
-  
-  return formatter.format(value);
 };

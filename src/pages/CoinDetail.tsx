@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -151,7 +152,7 @@ const CoinDetail = () => {
                     <Badge variant="outline">Rank #{coinDetail.market_cap_rank}</Badge>
                   </h1>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {coinDetail.links.homepage[0] && (
+                    {coinDetail.links?.homepage?.[0] && (
                       <a
                         href={coinDetail.links.homepage[0]}
                         target="_blank"
@@ -161,7 +162,7 @@ const CoinDetail = () => {
                         Official Website
                       </a>
                     )}
-                    {coinDetail.links.blockchain_site[0] && (
+                    {coinDetail.links?.blockchain_site?.[0] && (
                       <a
                         href={coinDetail.links.blockchain_site[0]}
                         target="_blank"
@@ -171,7 +172,7 @@ const CoinDetail = () => {
                         Blockchain Explorer
                       </a>
                     )}
-                    {coinDetail.links.subreddit_url && (
+                    {coinDetail.links?.subreddit_url && (
                       <a
                         href={coinDetail.links.subreddit_url}
                         target="_blank"
@@ -284,7 +285,7 @@ const CoinDetail = () => {
                   <div className="bg-crypto-dark border border-gray-800 rounded-lg p-4">
                     <div className="text-sm text-gray-400">Circulating Supply</div>
                     <div className="text-lg font-bold">
-                      {coinDetail.circulating_supply.toLocaleString()} {coinDetail.symbol.toUpperCase()}
+                      {coinDetail.circulating_supply ? coinDetail.circulating_supply.toLocaleString() : 'N/A'} {coinDetail.symbol.toUpperCase()}
                     </div>
                   </div>
                 </div>
@@ -321,7 +322,7 @@ const CoinDetail = () => {
             {/* About */}
             <div className="bg-crypto-dark border border-gray-800 rounded-lg p-6">
               <h2 className="text-xl font-bold mb-4">About {coinDetail.name}</h2>
-              {coinDetail.description.en ? (
+              {coinDetail.description?.en ? (
                 <div
                   dangerouslySetInnerHTML={{ __html: coinDetail.description.en }}
                   className="text-gray-300 space-y-4 prose prose-sm max-w-none prose-headings:text-white prose-a:text-blue-400"

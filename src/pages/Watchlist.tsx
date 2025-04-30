@@ -4,6 +4,7 @@ import CoinList from '@/components/CoinList';
 import { useCryptoList, useCurrencies } from '@/hooks/useCrypto';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { Coin } from '@/services/api/types';
 
 const Watchlist = () => {
   const {
@@ -48,7 +49,7 @@ const Watchlist = () => {
             favorites={favorites}
             onToggleFavorite={toggleFavorite}
             onSearch={setSearchTerm}
-            onSort={(key) => sortByColumn(key)}
+            onSort={(key) => sortByColumn(key as keyof Coin)}
             sortConfig={sortConfig}
           />
         </div>

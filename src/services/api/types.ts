@@ -1,4 +1,3 @@
-
 // API Interfaces
 export interface Coin {
   id: string;
@@ -31,6 +30,11 @@ export interface Coin {
   sparkline_in_7d?: {
     price: number[];
   };
+  roi: {
+    times: number;
+    currency: string;
+    percentage: number;
+  } | null;
 }
 
 export interface TrendingCoin {

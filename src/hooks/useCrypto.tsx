@@ -4,13 +4,15 @@ import {
   Coin, 
   CoinDetail, 
   ChartData,
-  TrendingCoin,
-  fetchCoins, 
-  fetchCoinDetail, 
-  fetchCoinChart, 
+  TrendingCoin
+} from '@/services/api/types';
+import {
+  fetchCoins,
+  fetchCoinDetail,
+  fetchCoinChart,
   fetchTrendingCoins,
   fetchSupportedCurrencies
-} from '@/services/api/types';
+} from '@/services/api';
 import { toast } from "sonner";
 
 export function useCryptoList(

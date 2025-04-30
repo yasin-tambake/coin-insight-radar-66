@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Search, User, Bell, Bell } from 'lucide-react';
+import { Search, User, Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const Navbar = () => {

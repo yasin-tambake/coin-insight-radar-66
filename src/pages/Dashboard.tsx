@@ -8,6 +8,7 @@ import TopPerformersChart from '@/components/TopPerformersChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/services/api';
+import { Coin } from '@/services/api';
 
 const Dashboard = () => {
   const { selectedCurrency } = useCurrencies();
@@ -42,8 +43,9 @@ const Dashboard = () => {
     setSearchTerm(term);
   };
   
-  const onSort = (key: keyof any) => {
-    sortByColumn(key);
+  const onSort = (key: string) => {
+    // Fix: Ensure key is a valid property of Coin
+    sortByColumn(key as keyof Coin);
   };
 
   return (

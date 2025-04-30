@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Coin, formatCurrency, formatPercentage } from '@/services/api';
+import { Coin } from '@/services/api/types';
+import { formatCurrency, formatPercentage } from '@/services/api/formatting';
 import {
   BarChart,
   Bar,

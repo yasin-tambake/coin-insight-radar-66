@@ -13,8 +13,8 @@ import MarketDominanceChart from '@/components/MarketDominanceChart';
 import VolatilityChart from '@/components/VolatilityChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { formatCurrency } from '@/services/api';
-import { Coin } from '@/services/api';
+import { formatCurrency } from '@/services/api/formatting';
+import { Coin } from '@/services/api/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ChatbotInterface from '@/components/AiAssistant/ChatbotInterface';
 
@@ -63,7 +63,7 @@ const Dashboard = () => {
   };
   
   const onSort = (key: string) => {
-    // Fix: Ensure key is a valid property of Coin
+    // Ensure key is a valid property of Coin type
     sortByColumn(key as keyof Coin);
   };
 
@@ -223,9 +223,6 @@ const Dashboard = () => {
             </div>
           </TabsContent>
         </Tabs>
-
-        {/* AI Assistant */}
-        <ChatbotInterface />
       </div>
     </Layout>
   );

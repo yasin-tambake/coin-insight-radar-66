@@ -1,6 +1,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Coin, formatCurrency } from '@/services/api';
+import { Coin } from '@/services/api/types';
+import { formatCurrency } from '@/services/api/formatting';
 import {
   BarChart,
   Bar,

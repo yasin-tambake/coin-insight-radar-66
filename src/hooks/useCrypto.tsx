@@ -10,7 +10,7 @@ import {
   fetchCoinChart, 
   fetchTrendingCoins,
   fetchSupportedCurrencies
-} from '@/services/api';
+} from '@/services/api/types';
 import { toast } from "sonner";
 
 export function useCryptoList(

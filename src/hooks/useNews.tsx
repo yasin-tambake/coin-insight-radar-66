@@ -11,7 +11,7 @@ import {
 
 export function useNewsData(query = 'cryptocurrency', pageSize = 20) {
   const { 
-    data: news, 
+    data: rawNews, 
     isLoading,
     error,
     refetch
@@ -20,6 +20,42 @@ export function useNewsData(query = 'cryptocurrency', pageSize = 20) {
     queryFn: () => fetchCryptoNews(query, pageSize),
     refetchInterval: 600000, // Refetch every 10 minutes
   });
+
+  // Process news articles with sentiment
+  const [news, setNews] = useState<NewsArticle[]>([]);
+
+  useEffect(() => {
+    if (rawNews) {
+      // Add simple sentiment classification based on content
+      const processedNews = rawNews.map(article => {
+        let sentiment: 'positive' | 'neutral' | 'negative' = 'neutral';
+        const title = article.title?.toLowerCase() || '';
+        const description = article.description?.toLowerCase() || '';
+        const content = title + ' ' + description;
+        
+        // Very basic sentiment analysis for demonstration
+        const positiveWords = ['surge', 'gain', 'rise', 'bull', 'growth', 'positive', 'up', 'high', 'record'];
+        const negativeWords = ['crash', 'drop', 'fall', 'bear', 'down', 'negative', 'low', 'loss', 'plunge'];
+        
+        const positiveScore = positiveWords.filter(word => content.includes(word)).length;
+        const negativeScore = negativeWords.filter(word => content.includes(word)).length;
+        
+        if (positiveScore > negativeScore) {
+          sentiment = 'positive';
+        } else if (negativeScore > positiveScore) {
+          sentiment = 'negative';
+        }
+        
+        return {
+          ...article,
+          sentiment,
+          sentimentScore: positiveScore - negativeScore
+        };
+      });
+      
+      setNews(processedNews);
+    }
+  }, [rawNews]);
 
   return {
     news: news || [],

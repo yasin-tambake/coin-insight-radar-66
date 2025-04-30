@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import NewsFeed from '@/components/NewsFeed';
 import { useNewsData } from '@/hooks/useNews';
+import { toast } from 'sonner';
 
 const News = () => {
   const location = useLocation();
@@ -22,14 +23,24 @@ const News = () => {
     setSearchQuery(term || 'cryptocurrency');
   };
 
-  // Refetch when searchQuery changes
+  // Show loading toast when fetching
+  useEffect(() => {
+    if (isLoading) {
+      toast.loading('Fetching latest news...');
+    }
+  }, [isLoading]);
+
+  // Refetch when searchQuery changes and show errors if any
   useEffect(() => {
     refetch();
-  }, [searchQuery, refetch]);
+    
+    if (error) {
+      console.error('Error loading news data:', error);
+      toast.error('Failed to load news. Please try again later.');
+    }
+  }, [searchQuery, refetch, error]);
 
-  if (error) {
-    console.error('Error loading news data:', error);
-  }
+  console.log("News count:", news?.length || 0);
 
   return (
     <Layout>
@@ -42,7 +53,7 @@ const News = () => {
         </div>
         
         <NewsFeed
-          news={news}
+          news={news || []}
           isLoading={isLoading}
           onSearch={handleSearch}
         />

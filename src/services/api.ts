@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // API base URLs
@@ -42,6 +41,20 @@ export interface Coin {
   sparkline_in_7d?: {
     price: number[];
   };
+}
+
+export interface TrendingCoin {
+  id: string;
+  coin_id?: number;
+  name: string;
+  symbol: string;
+  market_cap_rank?: number;
+  thumb: string;
+  small?: string;
+  large?: string;
+  slug: string;
+  price_btc: number;
+  score: number;
 }
 
 export interface CoinDetail extends Coin {
@@ -170,7 +183,7 @@ export const fetchCoinChart = async (
   }
 };
 
-export const fetchTrendingCoins = async (): Promise<{ coins: { item: Coin }[] } | null> => {
+export const fetchTrendingCoins = async (): Promise<{ coins: { item: TrendingCoin }[] } | null> => {
   try {
     const response = await fetch(`${COINGECKO_BASE_URL}/search/trending`);
     

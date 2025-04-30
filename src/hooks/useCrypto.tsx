@@ -5,6 +5,7 @@ import {
   Coin, 
   CoinDetail, 
   ChartData,
+  TrendingCoin,
   fetchCoins, 
   fetchCoinDetail, 
   fetchCoinChart, 

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import ChatbotInterface from "@/components/AiAssistant/ChatbotInterface";
 
 import Dashboard from "./pages/Dashboard";
 import CoinDetail from "./pages/CoinDetail";
@@ -41,6 +42,8 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          {/* Make the AI Assistant available on all pages */}
+          <ChatbotInterface />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

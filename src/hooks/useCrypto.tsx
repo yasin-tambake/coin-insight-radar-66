@@ -11,6 +11,7 @@ import {
   fetchTrendingCoins,
   fetchSupportedCurrencies
 } from '@/services/api';
+import { toast } from "sonner";
 
 export function useCryptoList(
   currency = 'usd',
@@ -28,6 +29,7 @@ export function useCryptoList(
     queryKey: ['cryptoList', currency, perPage, page],
     queryFn: () => fetchCoins(currency, perPage, page, sparkline, priceChangePercentage),
     refetchInterval: 60000, // Refetch every minute
+    staleTime: 30000, // Consider data fresh for 30 seconds
   });
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,6 +40,7 @@ export function useCryptoList(
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filteredCoins, setFilteredCoins] = useState<Coin[]>([]);
   const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const [currentPage, setCurrentPage] = useState(page);
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -75,10 +78,18 @@ export function useCryptoList(
       // Apply sorting
       if (sortConfig.key) {
         filtered.sort((a, b) => {
-          if (a[sortConfig.key as keyof Coin] < b[sortConfig.key as keyof Coin]) {
+          // Handle potential undefined values
+          const valueA = a[sortConfig.key as keyof Coin];
+          const valueB = b[sortConfig.key as keyof Coin];
+          
+          if (valueA === undefined && valueB === undefined) return 0;
+          if (valueA === undefined) return sortConfig.direction === 'asc' ? -1 : 1;
+          if (valueB === undefined) return sortConfig.direction === 'asc' ? 1 : -1;
+          
+          if (valueA < valueB) {
             return sortConfig.direction === 'asc' ? -1 : 1;
           }
-          if (a[sortConfig.key as keyof Coin] > b[sortConfig.key as keyof Coin]) {
+          if (valueA > valueB) {
             return sortConfig.direction === 'asc' ? 1 : -1;
           }
           return 0;
@@ -128,6 +139,11 @@ export function useCryptoList(
     }));
   }, []);
 
+  // Change page
+  const changePage = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
+  }, []);
+
   return {
     coins: filteredCoins,
     isLoading,
@@ -141,6 +157,8 @@ export function useCryptoList(
     isFavorite: (coinId: string) => favorites.includes(coinId),
     toggleFavorite,
     getFavoriteCoins,
+    currentPage,
+    changePage,
   };
 }
 

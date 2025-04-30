@@ -1,10 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -96,6 +90,27 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-crypto-darker text-foreground dark;
+  }
+}
+
+@layer components {
+  .price-up {
+    @apply text-crypto-up;
+  }
+  .price-down {
+    @apply text-crypto-down;
+  }
+  .price-neutral {
+    @apply text-crypto-neutral;
+  }
+  .bg-up {
+    @apply bg-crypto-up text-white;
+  }
+  .bg-down {
+    @apply bg-crypto-down text-white;
+  }
+  .bg-neutral {
+    @apply bg-crypto-neutral text-white;
   }
 }

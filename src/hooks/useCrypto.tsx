@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
   Coin, 
@@ -38,6 +37,7 @@ export function useCryptoList(
   }>({ key: 'market_cap_rank', direction: 'asc' });
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filteredCoins, setFilteredCoins] = useState<Coin[]>([]);
+  const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -52,36 +52,53 @@ export function useCryptoList(
     localStorage.setItem('cryptoFavorites', JSON.stringify(favorites));
   }, [favorites]);
 
-  // Filter and sort coins
+  // Filter and sort coins with debounced search
+  const debouncedSearch = useCallback((term: string) => {
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+
+    searchDebounceRef.current = setTimeout(() => {
+      if (!coins) return;
+      
+      let filtered = [...coins];
+      
+      // Apply search filter
+      if (term) {
+        const search = term.toLowerCase();
+        filtered = filtered.filter(
+          coin => coin.name.toLowerCase().includes(search) || 
+                 coin.symbol.toLowerCase().includes(search)
+        );
+      }
+      
+      // Apply sorting
+      if (sortConfig.key) {
+        filtered.sort((a, b) => {
+          if (a[sortConfig.key as keyof Coin] < b[sortConfig.key as keyof Coin]) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (a[sortConfig.key as keyof Coin] > b[sortConfig.key as keyof Coin]) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      
+      setFilteredCoins(filtered);
+    }, 300); // 300ms debounce
+  }, [coins, sortConfig]);
+
+  // Update filtered coins when coins data, search term or sort config changes
   useEffect(() => {
-    if (!coins) return;
-
-    let filtered = [...coins];
-
-    // Apply search filter
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        coin => coin.name.toLowerCase().includes(search) || 
-               coin.symbol.toLowerCase().includes(search)
-      );
-    }
-
-    // Apply sorting
-    if (sortConfig.key) {
-      filtered.sort((a, b) => {
-        if (a[sortConfig.key as keyof Coin] < b[sortConfig.key as keyof Coin]) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (a[sortConfig.key as keyof Coin] > b[sortConfig.key as keyof Coin]) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    setFilteredCoins(filtered);
-  }, [coins, searchTerm, sortConfig]);
+    debouncedSearch(searchTerm);
+    
+    return () => {
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current);
+      }
+    };
+  }, [coins, searchTerm, sortConfig, debouncedSearch]);
 
   // Toggle favorite
   const toggleFavorite = useCallback((coinId: string) => {
@@ -128,6 +145,8 @@ export function useCryptoList(
 }
 
 export function useCoinDetail(coinId: string, currency = 'usd') {
+  const [timeRange, setTimeRange] = useState<'1d' | '7d' | '30d' | '90d' | '1y'>('7d');
+  
   const {
     data: coinDetail,
     isLoading: isLoadingDetail,
@@ -143,9 +162,20 @@ export function useCoinDetail(coinId: string, currency = 'usd') {
     data: chartData,
     isLoading: isLoadingChart,
     error: chartError,
+    refetch: refetchChart
   } = useQuery({
-    queryKey: ['coinChart', coinId, currency],
-    queryFn: () => fetchCoinChart(coinId, 7, currency),
+    queryKey: ['coinChart', coinId, currency, timeRange],
+    queryFn: () => {
+      let days = 7;
+      switch(timeRange) {
+        case '1d': days = 1; break;
+        case '7d': days = 7; break;
+        case '30d': days = 30; break;
+        case '90d': days = 90; break;
+        case '1y': days = 365; break;
+      }
+      return fetchCoinChart(coinId, days, currency);
+    },
     enabled: !!coinId,
     refetchInterval: 300000, // Refetch every 5 minutes
   });
@@ -153,11 +183,20 @@ export function useCoinDetail(coinId: string, currency = 'usd') {
   const isLoading = isLoadingDetail || isLoadingChart;
   const error = detailError || chartError;
 
+  // Trigger chart data refetch when timeRange changes
+  useEffect(() => {
+    if (coinId) {
+      refetchChart();
+    }
+  }, [timeRange, coinId, refetchChart]);
+
   return {
     coinDetail,
     chartData,
     isLoading,
     error,
+    timeRange,
+    setTimeRange
   };
 }
 

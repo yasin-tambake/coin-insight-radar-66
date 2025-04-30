@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import CoinDetail from "./pages/CoinDetail";
 import News from "./pages/News";
 import Watchlist from "./pages/Watchlist";
+import Alerts from "./pages/Alerts";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/coin/:coinId" element={<CoinDetail />} />
             <Route path="/news" element={<News />} />
             <Route path="/watchlist" element={<Watchlist />} />
+            <Route path="/alerts" element={<Alerts />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />

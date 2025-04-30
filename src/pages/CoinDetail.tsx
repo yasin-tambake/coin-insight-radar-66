@@ -9,6 +9,7 @@ import Chart from '@/components/Chart';
 import NewsCard from '@/components/NewsCard';
 import CurrencyConverter from '@/components/CurrencyConverter';
 import SentimentAnalysis from '@/components/SentimentAnalysis';
+import TopPerformersChart from '@/components/TopPerformersChart'; // This will be added later
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +26,8 @@ const CoinDetail = () => {
     chartData,
     isLoading: isLoadingCoin,
     error: coinError,
+    timeRange,
+    setTimeRange
   } = useCoinDetail(coinId || '', selectedCurrency);
   
   const { favorites, toggleFavorite } = useCryptoList();
@@ -264,6 +267,8 @@ const CoinDetail = () => {
                     coinName={coinDetail.name}
                     color={coinDetail.price_change_percentage_24h >= 0 ? '#16c784' : '#ea3943'}
                     currency={selectedCurrency}
+                    timeRange={timeRange}
+                    onTimeRangeChange={setTimeRange}
                   />
                 </div>
                 
@@ -298,45 +303,31 @@ const CoinDetail = () => {
                     <TabsTrigger value="converter">Converter</TabsTrigger>
                   </TabsList>
                   
-                  <div className="mt-4">
-                    <TabsContent value="sentiment">
-                      <SentimentAnalysis
-                        sentiment={sentiment}
-                        isLoading={isLoadingNews || isGeneratingCommentary}
-                        marketCommentary={marketCommentary}
-                      />
-                    </TabsContent>
-                    <TabsContent value="converter">
-                      <CurrencyConverter
-                        coinName={coinDetail.name}
-                        coinSymbol={coinDetail.symbol}
-                        currentPrice={coinDetail.current_price}
-                        supportedCurrencies={popularCurrencies}
-                      />
-                    </TabsContent>
-                  </div>
+                  <TabsContent value="sentiment" className="mt-4">
+                    <SentimentAnalysis
+                      sentiment={sentiment}
+                      isLoading={isLoadingNews || isGeneratingCommentary}
+                      marketCommentary={marketCommentary}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="converter" className="mt-4">
+                    <CurrencyConverter
+                      coinName={coinDetail.name}
+                      coinSymbol={coinDetail.symbol}
+                      currentPrice={coinDetail.current_price}
+                      supportedCurrencies={popularCurrencies}
+                    />
+                  </TabsContent>
                 </Tabs>
               </div>
             </div>
             
-            {/* About */}
-            <div className="bg-crypto-dark border border-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">About {coinDetail.name}</h2>
-              {coinDetail.description?.en ? (
-                <div
-                  dangerouslySetInnerHTML={{ __html: coinDetail.description.en }}
-                  className="text-gray-300 space-y-4 prose prose-sm max-w-none prose-headings:text-white prose-a:text-blue-400"
-                />
-              ) : (
-                <p className="text-gray-400">No description available.</p>
-              )}
-            </div>
-            
             {/* News */}
             <div>
-              <h2 className="text-xl font-bold mb-4">Latest {coinDetail.name} News</h2>
+              <h2 className="text-2xl font-bold mb-4">Latest {coinDetail.name} News</h2>
               {isLoadingNews ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="bg-crypto-dark border border-gray-800 rounded-lg overflow-hidden">
                       <Skeleton className="h-40 bg-gray-800" />
@@ -355,24 +346,14 @@ const CoinDetail = () => {
                   ))}
                 </div>
               ) : news && news.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {news.slice(0, 3).map((article) => (
                     <NewsCard key={article.url} article={article} />
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 bg-crypto-dark border border-gray-800 rounded-lg">
-                  <p className="text-gray-400">No news available for {coinDetail.name}.</p>
-                </div>
-              )}
-              
-              {news && news.length > 3 && (
-                <div className="mt-4 text-center">
-                  <Link to={`/news?query=${coinDetail.name}`}>
-                    <Button variant="outline">
-                      View All {coinDetail.name} News
-                    </Button>
-                  </Link>
+                <div className="bg-crypto-dark border border-gray-800 rounded-lg p-8 text-center">
+                  <p className="text-gray-400">No news articles found for {coinDetail.name}</p>
                 </div>
               )}
             </div>

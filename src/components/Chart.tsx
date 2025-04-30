@@ -32,10 +32,13 @@ interface ChartProps {
   coinName: string;
   color: string;
   currency: string;
+  timeRange: string;
+  onTimeRangeChange: (range: '1d' | '7d' | '30d' | '90d' | '1y') => void;
 }
 
 interface TransformedDataPoint {
   date: string;
+  fullDate: string;
   price: number;
   volume: number;
 }
@@ -47,8 +50,9 @@ const Chart: React.FC<ChartProps> = ({
   coinName,
   color = '#3b82f6',
   currency,
+  timeRange,
+  onTimeRangeChange
 }) => {
-  const [timeRange, setTimeRange] = useState<'1d' | '7d' | '30d' | '90d' | '1y'>('7d');
   const [transformedData, setTransformedData] = useState<TransformedDataPoint[]>([]);
   
   useEffect(() => {
@@ -57,7 +61,7 @@ const Chart: React.FC<ChartProps> = ({
     const transformed = data.prices.map((point, idx) => {
       const date = new Date(point[0]);
       return {
-        date: date.toLocaleDateString(),
+        date: formatDateForTimeRange(date, timeRange),
         fullDate: date.toISOString(),
         price: point[1],
         volume: data.total_volumes[idx] ? data.total_volumes[idx][1] : 0,
@@ -65,7 +69,23 @@ const Chart: React.FC<ChartProps> = ({
     });
     
     setTransformedData(transformed);
-  }, [data]);
+  }, [data, timeRange]);
+  
+  const formatDateForTimeRange = (date: Date, range: string) => {
+    switch(range) {
+      case '1d':
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      case '7d':
+        return date.toLocaleDateString([], { weekday: 'short' });
+      case '30d':
+      case '90d':
+        return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      case '1y':
+        return date.toLocaleDateString([], { month: 'short', year: '2-digit' });
+      default:
+        return date.toLocaleDateString();
+    }
+  };
   
   const currencySymbol = currency === 'usd' ? '$' :
                          currency === 'eur' ? '€' :
@@ -89,8 +109,7 @@ const Chart: React.FC<ChartProps> = ({
   };
   
   const handleTimeRangeChange = (range: '1d' | '7d' | '30d' | '90d' | '1y') => {
-    setTimeRange(range);
-    // In a real app, we would fetch new data for the selected time range
+    onTimeRangeChange(range);
   };
   
   if (isLoading) {

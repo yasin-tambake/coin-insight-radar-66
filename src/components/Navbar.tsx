@@ -1,8 +1,9 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrencies } from '@/hooks/useCrypto';
+import { usePriceAlerts } from '@/hooks/useAlerts';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,13 +11,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Search, User, Bell } from 'lucide-react';
+import { Search, User, Bell, Bell } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const Navbar = () => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const { popularCurrencies, selectedCurrency, setSelectedCurrency, getCurrencySymbol } = useCurrencies();
+  const { getActiveAlerts } = usePriceAlerts();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const activeAlerts = getActiveAlerts();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -84,8 +88,13 @@ const Navbar = () => {
             </Link>
 
             {/* Alerts */}
-            <Link to="/alerts" className="p-2 rounded-full hover:bg-gray-700">
+            <Link to="/alerts" className="p-2 rounded-full hover:bg-gray-700 relative">
               <Bell className="h-5 w-5 text-gray-300" />
+              {activeAlerts.length > 0 && (
+                <Badge className="absolute -top-1 -right-1 px-1 min-w-[18px] h-[18px] text-[10px] flex items-center justify-center bg-blue-500 border-crypto-dark">
+                  {activeAlerts.length}
+                </Badge>
+              )}
             </Link>
 
             {/* User menu */}
@@ -156,6 +165,23 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+            
+            <Link
+              to="/alerts"
+              className={`flex justify-between items-center px-3 py-2 rounded-md text-base font-medium ${
+                isActive('/alerts')
+                  ? 'bg-gray-800 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>Alerts</span>
+              {activeAlerts.length > 0 && (
+                <Badge className="px-1 min-w-[18px] h-[18px] text-[10px] flex items-center justify-center bg-blue-500">
+                  {activeAlerts.length}
+                </Badge>
+              )}
+            </Link>
 
             <div className="border-t border-gray-700 pt-4 pb-3">
               <div className="flex items-center justify-between px-3">

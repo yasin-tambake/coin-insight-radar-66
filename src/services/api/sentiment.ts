@@ -10,6 +10,11 @@ export const analyzeSentiment = async (
   newsArticles: NewsArticle[]
 ): Promise<SentimentAnalysis | null> => {
   try {
+    if (!newsArticles || newsArticles.length === 0) {
+      console.log('No news articles provided for sentiment analysis');
+      return null;
+    }
+    
     const headlines = newsArticles.slice(0, 5).map(article => article.title).join('\n');
     const descriptions = newsArticles.slice(0, 5)
       .filter(article => article.description)
